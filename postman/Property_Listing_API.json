@@ -1,0 +1,147 @@
+{
+  "info": {
+    "name": "Property Listing API",
+    "description": "Postman collection for Property Listing API module. Set {{base_url}} to your API root (e.g. http://localhost:8000).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "agent_id",
+      "value": "1"
+    },
+    {
+      "key": "property_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Agent",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Agent One\",\n  \"email\": \"agent1@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/agents",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "agents"]
+        },
+        "description": "Creates a new agent. Use the returned `id` as `agent_id` when creating properties."
+      }
+    },
+    {
+      "name": "Create Property",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Nice Apartment\",\n  \"description\": \"2BHK in city center\",\n  \"price\": 150000,\n  \"address\": \"123 Main St\",\n  \"city\": \"Pune\",\n  \"country\": \"India\",\n  \"agent_id\": {{agent_id}}\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/properties",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "properties"]
+        },
+        "description": "Creates a property. Returns 409 if duplicate (same agent_id + address + city)."
+      }
+    },
+    {
+      "name": "Upload Property Images",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "images[]",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "images[]",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/properties/{{property_id}}/images",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "properties", "{{property_id}}", "images"]
+        },
+        "description": "Upload one or more images for a property. Returns 202; images are processed asynchronously via queue."
+      }
+    },
+    {
+      "name": "List Properties",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/properties?per_page=10",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "properties"],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "10"
+            },
+            {
+              "key": "city",
+              "value": "Pune",
+              "disabled": true
+            },
+            {
+              "key": "country",
+              "value": "India",
+              "disabled": true
+            },
+            {
+              "key": "agent_id",
+              "value": "{{agent_id}}",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "List properties with pagination and images. Optional filters: per_page, city, country, agent_id."
+      }
+    }
+  ]
+}
