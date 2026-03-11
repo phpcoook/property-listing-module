@@ -13,7 +13,14 @@ A Laravel API module for agents to create properties, upload images to S3, and l
 
 ### 1. Configure environment
 
-Ensure your `.env` uses PostgreSQL and matches the `db` service:
+- Copy `.env.example` to `.env` if you haven’t already.
+- Generate an application key (required once):
+
+  ```bash
+  docker compose run --rm app php artisan key:generate
+  ```
+
+- Ensure your `.env` uses PostgreSQL and matches the `db` service:
 
 ```env
 DB_CONNECTION=pgsql
