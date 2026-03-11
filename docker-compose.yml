@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   app:
     build:
@@ -10,8 +8,10 @@ services:
       - "8000:8000"
     volumes:
       - .:/var/www/html
+      - /var/www/html/vendor
     depends_on:
-      - db
+      migrate:
+        condition: service_completed_successfully
 
   db:
     image: postgres:16-alpine
@@ -24,6 +24,25 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d property_listing"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: property-listing-migrate
+    command: php artisan migrate --force
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
 
   queue:
     build:
@@ -33,8 +52,10 @@ services:
     command: php artisan queue:work --queue=property-images --sleep=1 --tries=3 -v
     volumes:
       - .:/var/www/html
+      - /var/www/html/vendor
     depends_on:
-      - db
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   pgdata:

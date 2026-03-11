@@ -41,15 +41,7 @@ This starts:
 - **db** – PostgreSQL 16
 - **queue** – Worker that processes image-upload jobs
 
-### 3. Run migrations
-
-In another terminal:
-
-```bash
-docker compose exec app php artisan migrate
-```
-
-### 4. Create an agent (for testing)
+### 3. Create an agent (for testing)
 
 Use the API or tinker:
 
